@@ -1,0 +1,45 @@
+
+
+for wd in 0 5 15 30
+do
+for var in lower mean upper 
+do
+	r.import --overwrite \
+	  input=/home/manuel/Y/communs_infosol/Projets/GlobalSoilMap.net/GSM_90m/SOC/soc_cor_trans/$var\
+	  '/soc_cor_l'$wd'_'$var'.tif' output=soc_cor_l$wd'_'$var
+
+done
+done
+
+r.mapcalc --overwrite  expression='logsoc_cor_l0_mean=log(soc_cor_l0_mean)'
+
+for wd in 0 5 15
+do
+for var in lower mean upper 
+do
+  exp=logsoc_cor_l$wd'_'$var'=log(soc_cor_l'$wd'_'$var')'
+  echo $exp
+  r.mapcalc --overwrite  expression="$exp"
+
+done
+done
+
+## variances
+for wd in 0 5 15
+do
+  exp=varsoc_cor_l$wd' = ((logsoc_cor_l'$wd'_mean - logsoc_cor_l'$wd'_lower) / 1.6448)^2'
+  echo $exp
+  r.mapcalc --overwrite  expression="$exp"
+
+done
+
+case lala in
+esac
+
+
+r.mapcalc --overwrite  expression="soc_cor_l15_upper - 2 * soc_cor_l15_mean + soc_cor_l15_lower"
+
+
+## sum to 30 cm
+Continue in R since you cannot sum lognormal random variables...
+
